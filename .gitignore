@@ -1,0 +1,44 @@
+# Python env / caches
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pytest_cache/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+
+# Env files (секреты)
+.env
+.env.* 
+secrets.json
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# Docker
+*.log
+docker-compose.override.yml
+
+# Data & local DB
+*.sqlite3
+data/
+tmp/
+
+# Macros / local specific
+local_settings.py
+
+# Node (if any front)
+node_modules/
+
+# Logs
+*.log
