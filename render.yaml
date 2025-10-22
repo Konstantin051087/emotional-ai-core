@@ -14,15 +14,17 @@ services:
         value: https://emotion-module.onrender.com
       - key: PERSONALITY_MODULE_URL
         value: https://personality-module.onrender.com
+
   - type: web
     name: emotion-module
     env: python
     plan: free
-    buildCommand: cd modules/emotion_analyzer && pip install -r requirements.txt
-    startCommand: cd modules/emotion_analyzer && uvicorn app:app --host 0.0.0.0 --port $PORT
+    buildCommand: cd emotion_module && pip install -r requirements.txt || true
+    startCommand: cd emotion_module && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+
   - type: web
     name: personality-module
     env: python
     plan: free
-    buildCommand: cd modules/personality_engine && pip install -r requirements.txt
-    startCommand: cd modules/personality_engine && uvicorn app:app --host 0.0.0.0 --port $PORT
+    buildCommand: cd personality_module && pip install -r requirements.txt || true
+    startCommand: cd personality_module && uvicorn app.main:app --host 0.0.0.0 --port $PORT
