@@ -14,7 +14,7 @@ services:
         value: https://emotion-module.onrender.com
       - key: PERSONALITY_MODULE_URL
         value: https://personality-module.onrender.com
-
+	pythonVersion: "3.13.4"
   - type: web
     name: emotion-module
     env: python
