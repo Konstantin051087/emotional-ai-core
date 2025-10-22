@@ -19,12 +19,12 @@ services:
     name: emotion-module
     env: python
     plan: free
-    buildCommand: cd emotion_module && pip install -r requirements.txt || true
+    buildCommand: cd emotion_module && pip install -r requirements.txt
     startCommand: cd emotion_module && uvicorn app.main:app --host 0.0.0.0 --port $PORT
 
   - type: web
     name: personality-module
     env: python
     plan: free
-    buildCommand: cd personality_module && pip install -r requirements.txt || true
+    buildCommand: cd personality_module && pip install -r requirements.txt
     startCommand: cd personality_module && uvicorn app.main:app --host 0.0.0.0 --port $PORT
