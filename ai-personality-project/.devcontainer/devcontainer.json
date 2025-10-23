@@ -1,0 +1,53 @@
+**Файл: `.devcontainer/devcontainer.json`**
+```json
+{
+    "name": "AI Personality Development",
+    "image": "mcr.microsoft.com/devcontainers/python:0-3.11",
+    
+    "features": {
+        "ghcr.io/devcontainers/features/github-cli:1": {},
+        "ghcr.io/devcontainers/features/node:1": {}
+    },
+    
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "ms-toolsai.jupyter",
+                "github.copilot",
+                "formulahendry.auto-rename-tag"
+            ],
+            "settings": {
+                "python.defaultInterpreterPath": "/usr/local/bin/python",
+                "python.linting.enabled": true,
+                "python.linting.pylintEnabled": true,
+                "python.formatting.autopep8Path": "/usr/local/py-utils/bin/autopep8",
+                "python.formatting.blackPath": "/usr/local/py-utils/bin/black",
+                "python.formatting.yapfPath": "/usr/local/py-utils/bin/yapf",
+                "python.linting.banditPath": "/usr/local/py-utils/bin/bandit",
+                "python.linting.flake8Path": "/usr/local/py-utils/bin/flake8",
+                "python.linting.mypyPath": "/usr/local/py-utils/bin/mypy",
+                "python.linting.pycodestylePath": "/usr/local/py-utils/bin/pycodestyle",
+                "python.linting.pydocstylePath": "/usr/local/py-utils/bin/pydocstyle",
+                "python.linting.pylintPath": "/usr/local/py-utils/bin/pylint"
+            }
+        }
+    },
+    
+    "postCreateCommand": "pip install --upgrade pip && pip install -r requirements.txt",
+    "postStartCommand": "echo 'Среда разработки AI Personality готова!'",
+    
+    "portsAttributes": {
+        "5000": {
+            "label": "Flask Application",
+            "onAutoForward": "notify"
+        },
+        "8888": {
+            "label": "Jupyter Notebook", 
+            "onAutoForward": "notify"
+        }
+    },
+    
+    "forwardPorts": [5000, 8888]
+}
