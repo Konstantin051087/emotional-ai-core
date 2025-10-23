@@ -1,5 +1,3 @@
-**Файл: `test_huggingface.py`**
-```python
 #!/usr/bin/env python3
 """
 Тестирование функциональности для Hugging Face Spaces
