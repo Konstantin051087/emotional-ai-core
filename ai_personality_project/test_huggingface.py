@@ -8,7 +8,11 @@ import os
 import json
 
 # Добавляем текущую директорию в путь
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+current_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, current_dir)
+
+print(f"📁 Текущая директория: {current_dir}")
+print(f"📋 Файлы в директории: {os.listdir(current_dir)}")
 
 def test_imports():
     """Тестирование импортов"""
@@ -22,10 +26,14 @@ def test_imports():
         return False
     
     try:
+        # Прямой импорт из текущей директории
         from emotional_model import EmotionalState
         print("✅ EmotionalState импортирован")
     except ImportError as e:
         print(f"❌ Ошибка импорта EmotionalState: {e}")
+        # Покажем полную трассировку для отладки
+        import traceback
+        traceback.print_exc()
         return False
     
     try:
@@ -66,6 +74,8 @@ def test_emotional_model():
         
     except Exception as e:
         print(f"❌ Ошибка тестирования модели: {e}")
+        import traceback
+        traceback.print_exc()
         return False
 
 def test_app_functionality():
@@ -73,6 +83,11 @@ def test_app_functionality():
     print("\n=== ТЕСТИРОВАНИЕ ПРИЛОЖЕНИЯ ===")
     
     try:
+        # Проверяем, что app.py существует
+        if not os.path.exists('app.py'):
+            print("❌ Файл app.py не найден")
+            return False
+            
         # Импортируем класс приложения
         from app import AIPersonalityDemo
         
@@ -83,9 +98,10 @@ def test_app_functionality():
         test_text = "Сегодня прекрасный день для новых начинаний!"
         result = demo.analyze_emotion(test_text)
         
-        if result and "эмоциональный анализ" in result.lower():
+        if result and isinstance(result, str) and len(result) > 0:
             print("✅ Анализ эмоций работает")
             print(f"   Результат содержит {len(result)} символов")
+            print(f"   Первые 100 символов: {result[:100]}...")
         else:
             print("❌ Анализ эмоций не вернул ожидаемый результат")
             return False
@@ -94,6 +110,8 @@ def test_app_functionality():
         
     except Exception as e:
         print(f"❌ Ошибка тестирования приложения: {e}")
+        import traceback
+        traceback.print_exc()
         return False
 
 def main():

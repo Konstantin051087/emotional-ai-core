@@ -1,35 +1,44 @@
 import json
 import numpy as np
-from datetime import datetime, timedelta
-from typing import Dict, List, Any
-from enum import Enum
-
-class EmotionType(Enum):
-    JOY = "joy"
-    SADNESS = "sadness" 
-    ANGER = "anger"
-    FEAR = "fear"
-    SURPRISE = "surprise"
-    TRUST = "trust"
-    ANTICIPATION = "anticipation"
-    DISGUST = "disgust"
+from datetime import datetime
+from typing import Dict, Any, List
 
 class EmotionalState:
     def __init__(self, profile_path: str = "character_profile.json"):
         # Загрузка конфигурации из профиля
-        with open(profile_path, 'r', encoding='utf-8') as f:
-            self.profile = json.load(f)
+        try:
+            with open(profile_path, 'r', encoding='utf-8') as f:
+                self.profile = json.load(f)
+        except FileNotFoundError:
+            # Фолбэк профиль если файл не найден
+            self.profile = {
+                "name": "Алиса",
+                "personality": {
+                    "traits": {
+                        "openness": 9,
+                        "conscientiousness": 7,
+                        "extraversion": 3,
+                        "agreeableness": 8,
+                        "neuroticism": 4
+                    }
+                },
+                "emotional_config": {
+                    "base_sensitivity": 0.7,
+                    "mood_swing_speed": 0.4,
+                    "recovery_rate": 0.6
+                }
+            }
         
         # Инициализация эмоций
         self.emotions = {
-            EmotionType.JOY.value: 0.5,
-            EmotionType.SADNESS.value: 0.2,
-            EmotionType.ANGER.value: 0.1,
-            EmotionType.FEAR.value: 0.1,
-            EmotionType.SURPRISE.value: 0.3,
-            EmotionType.TRUST.value: 0.6,
-            EmotionType.ANTICIPATION.value: 0.4,
-            EmotionType.DISGUST.value: 0.1
+            "joy": 0.5,
+            "sadness": 0.2,
+            "anger": 0.1,
+            "fear": 0.1,
+            "surprise": 0.3,
+            "trust": 0.6,
+            "anticipation": 0.4,
+            "disgust": 0.1
         }
         
         # Настроение и состояние
@@ -42,9 +51,10 @@ class EmotionalState:
         self.last_update = datetime.now()
         
         # Конфигурация из профиля
-        self.sensitivity = self.profile['emotional_config']['base_sensitivity']
-        self.mood_swing_speed = self.profile['emotional_config']['mood_swing_speed']
-        self.recovery_rate = self.profile['emotional_config']['recovery_rate']
+        emotional_config = self.profile.get('emotional_config', {})
+        self.sensitivity = emotional_config.get('base_sensitivity', 0.7)
+        self.mood_swing_speed = emotional_config.get('mood_swing_speed', 0.4)
+        self.recovery_rate = emotional_config.get('recovery_rate', 0.6)
     
     def update_from_text(self, text: str, sentiment_scores: Dict[str, float] = None):
         """Обновление эмоционального состояния на основе текста"""
@@ -74,23 +84,23 @@ class EmotionalState:
         
         # Эмоциональные словари
         emotion_lexicons = {
-            EmotionType.JOY.value: [
+            "joy": [
                 "рад", "счастлив", "восторг", "ура", "прекрасно", "отлично", 
-                "люблю", "нравится", "восхитительно", "замечательно"
+                "люблю", "нравится", "восхитительно", "замечательно", "хорошо"
             ],
-            EmotionType.SADNESS.value: [
+            "sadness": [
                 "грустно", "печально", "тоска", "плачу", "разочарован", 
-                "жаль", "скорбь", "уныние", "горе", "слезы"
+                "жаль", "скорбь", "уныние", "горе", "слезы", "плохо"
             ],
-            EmotionType.ANGER.value: [
+            "anger": [
                 "злой", "сердит", "ярость", "гнев", "разозлился", "бесит",
                 "ненавижу", "возмущен", "раздражен", "бешенство"
             ],
-            EmotionType.FEAR.value: [
+            "fear": [
                 "боюсь", "страх", "испуг", "ужас", "опасно", "тревога",
                 "паника", "напуган", "опасение", "беспокойство"
             ],
-            EmotionType.TRUST.value: [
+            "trust": [
                 "доверяю", "уверен", "надежный", "верю", "доверие",
                 "надежда", "уверенность", "надеюсь", "верный"
             ]
@@ -110,11 +120,11 @@ class EmotionalState:
         
         # Модификаторы на основе личности
         personality_modifiers = {
-            EmotionType.JOY.value: traits['openness'] * 0.05 + traits['agreeableness'] * 0.03,
-            EmotionType.SADNESS.value: traits['neuroticism'] * 0.08,
-            EmotionType.ANGER.value: traits['neuroticism'] * 0.06 - traits['agreeableness'] * 0.04,
-            EmotionType.FEAR.value: traits['neuroticism'] * 0.07,
-            EmotionType.TRUST.value: traits['agreeableness'] * 0.08
+            "joy": traits['openness'] * 0.05 + traits['agreeableness'] * 0.03,
+            "sadness": traits['neuroticism'] * 0.08,
+            "anger": traits['neuroticism'] * 0.06 - traits['agreeableness'] * 0.04,
+            "fear": traits['neuroticism'] * 0.07,
+            "trust": traits['agreeableness'] * 0.08
         }
         
         # Применение затухания и новых влияний
@@ -131,17 +141,17 @@ class EmotionalState:
     def _calculate_mood(self):
         """Расчет общего настроения"""
         positive_emotions = sum([
-            self.emotions[EmotionType.JOY.value],
-            self.emotions[EmotionType.TRUST.value],
-            self.emotions[EmotionType.SURPRISE.value] * 0.5,
-            self.emotions[EmotionType.ANTICIPATION.value] * 0.3
+            self.emotions["joy"],
+            self.emotions["trust"],
+            self.emotions["surprise"] * 0.5,
+            self.emotions["anticipation"] * 0.3
         ])
         
         negative_emotions = sum([
-            self.emotions[EmotionType.SADNESS.value],
-            self.emotions[EmotionType.ANGER.value], 
-            self.emotions[EmotionType.FEAR.value],
-            self.emotions[EmotionType.DISGUST.value]
+            self.emotions["sadness"],
+            self.emotions["anger"], 
+            self.emotions["fear"],
+            self.emotions["disgust"]
         ])
         
         raw_mood = (positive_emotions - negative_emotions) * 10
@@ -149,7 +159,7 @@ class EmotionalState:
         
         # Обновление валентности и активации
         self.valence = (self.mood + 10) / 20  # Нормализация к 0-1
-        self.arousal = np.std(list(self.emotions.values()))  # Активация как дисперсия эмоций
+        self.arousal = float(np.std(list(self.emotions.values())))  # Активация как дисперсия эмоций
     
     def _save_to_history(self):
         """Сохранение текущего состояния в историю"""
@@ -202,13 +212,20 @@ class EmotionalState:
             return "стабильное"
         
         recent_moods = [state['mood'] for state in self.emotion_history[-5:]]
-        trend = np.polyfit(range(len(recent_moods)), recent_moods, 1)[0]
-        
-        if trend > 0.5: return "улучшающееся"
-        elif trend > 0.1: return "стабилизирующееся" 
-        elif trend > -0.1: return "стабильное"
-        elif trend > -0.5: return "ухудшающееся"
-        else: return "резко ухудшающееся"
+        if len(recent_moods) < 2:
+            return "стабильное"
+            
+        try:
+            x = list(range(len(recent_moods)))
+            trend = np.polyfit(x, recent_moods, 1)[0]
+            
+            if trend > 0.5: return "улучшающееся"
+            elif trend > 0.1: return "стабилизирующееся" 
+            elif trend > -0.1: return "стабильное"
+            elif trend > -0.5: return "ухудшающееся"
+            else: return "резко ухудшающееся"
+        except:
+            return "стабильное"
     
     def _get_personality_influence(self) -> Dict[str, float]:
         """Влияние личности на эмоции"""
@@ -219,3 +236,11 @@ class EmotionalState:
             "neuroticism_effect": traits['neuroticism'] * 0.15,
             "agreeableness_effect": traits['agreeableness'] * 0.08
         }
+
+# Тестовый код для проверки модуля
+if __name__ == "__main__":
+    print("🧠 Тестирование emotional_model.py")
+    model = EmotionalState()
+    test_text = "Я очень рад сегодняшнему дню!"
+    result = model.update_from_text(test_text)
+    print("Результат теста:", result)
