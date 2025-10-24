@@ -58,7 +58,7 @@
     "\n",
     "# Клонирование репозитория\n",
     "!rm -rf ai-personality-project\n",
-    "!git clone https://github.com/your-username/ai_personality_project.git\n",
+    "!git clone https://github.com/Konstantin051087/emotional-ai-core.git\n",
     "%cd ai-personality-project\n",
     "\n",
     "# Настройка путей\n",
