@@ -557,7 +557,7 @@
     "    model = EmotionalState()\n",
     "    test_results[\"emotional_model_creation\"] = True\n",
     "    \n",
-    # Проверка анализа\n",
+    "	 # Проверка анализа\n",
     "    result = model.update_from_text(\"Тестовый текст\")\n",
     "    test_results[\"emotional_analysis\"] = isinstance(result, dict) and 'mood' in result\n",
     "    \n",

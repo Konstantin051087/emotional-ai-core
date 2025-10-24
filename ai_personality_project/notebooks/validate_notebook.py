@@ -22,7 +22,7 @@ def validate_and_fix_notebook(filepath):
         return False
 
 if __name__ == "__main__":
-    notebook_file = "notebooks/phase1_complete_testing.ipynb"
+    notebook_file = "phase1_testing.ipynb"
     if validate_and_fix_notebook(notebook_file):
         print("🎉 Ноутбук готов к использованию в Google Colab")
         sys.exit(0)
