@@ -1,8 +1,9 @@
 import logging
 from typing import List, Optional, Dict, Any
 from datetime import datetime, timedelta
-from .db_config import DatabaseConfig
-from .models import Conversation, TrainingData, ModelVersion
+from database.db_config import DatabaseConfig
+from database.models import Conversation, TrainingData, ModelVersion
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -81,7 +82,7 @@ class EmotionalAIRepository:
                 conversation.user_id,
                 conversation.user_input,
                 conversation.ai_response,
-                conversation.emotional_state,
+                json.dumps(conversation.emotional_state),
                 conversation.created_at
             ))
             
@@ -115,11 +116,15 @@ class EmotionalAIRepository:
             conversations = []
             
             for row in rows:
+                emotional_state = row[3] if row[3] else {}
+                if isinstance(emotional_state, str):
+                    emotional_state = json.loads(emotional_state)
+                
                 conversation = Conversation(
                     user_id=row[0],
                     user_input=row[1],
                     ai_response=row[2],
-                    emotional_state=row[3] if row[3] else {},
+                    emotional_state=emotional_state,
                     created_at=row[4]
                 )
                 conversations.append(conversation)
@@ -146,8 +151,8 @@ class EmotionalAIRepository:
             """, (
                 training_data.input_text,
                 training_data.expected_response,
-                training_data.emotional_context,
-                training_data.personality_traits,
+                json.dumps(training_data.emotional_context),
+                json.dumps(training_data.personality_traits),
                 training_data.created_at
             ))
             
@@ -180,11 +185,19 @@ class EmotionalAIRepository:
             training_data_list = []
             
             for row in rows:
+                emotional_context = row[2] if row[2] else {}
+                personality_traits = row[3] if row[3] else {}
+                
+                if isinstance(emotional_context, str):
+                    emotional_context = json.loads(emotional_context)
+                if isinstance(personality_traits, str):
+                    personality_traits = json.loads(personality_traits)
+                
                 training_data = TrainingData(
                     input_text=row[0],
                     expected_response=row[1],
-                    emotional_context=row[2] if row[2] else {},
-                    personality_traits=row[3] if row[3] else {},
+                    emotional_context=emotional_context,
+                    personality_traits=personality_traits,
                     created_at=row[4]
                 )
                 training_data_list.append(training_data)

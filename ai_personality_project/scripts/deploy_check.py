@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+    #!/usr/bin/env python3
 """
 Скрипт проверки развертывания Фазы 2
 """
@@ -10,6 +10,8 @@ import requests
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from database.repository import EmotionalAIRepository
+
+os.chdir('..')
 
 def check_database():
     """Проверка подключения к базе данных"""
