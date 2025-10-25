@@ -1,122 +1,50 @@
-# AI Personality Project - Конфигурация развертывания на Render
-# Фаза 1: Проектирование и определение концепции
-
 services:
   - type: web
-    name: ai-personality-phase1
-    env: python
+    name: emotional-ai-core
+    env: docker
     plan: free
     region: frankfurt
     branch: main
     
-    # Build Configuration
-    buildCommand: |
-      echo "🚀 Начало сборки AI Personality Project - Фаза 1"
-      python -m pip install --upgrade pip
-      pip install -r requirements.txt
-      echo "✅ Зависимости установлены"
-      echo "🔍 Проверка структуры проекта..."
-      ls -la
-      echo "🧪 Запуск тестов..."
-      python test_huggingface.py
-      echo "🎉 Сборка завершена успешно"
+    envVars:
+      - key: DB_HOST
+        fromDatabase:
+          name: emotional-ai-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: emotional-ai-db  
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: emotional-ai-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: emotional-ai-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: emotional-ai-db
+          property: password
+      - key: GCP_PROJECT_ID
+        value: emotional-ai-project
+      - key: GCP_LOCATION
+        value: europe-west1
+      - key: GCP_BUCKET_NAME
+        value: emotional-ai-models
+      - key: PYTHONPATH
+        value: /app
     
-    # Start Configuration  
+    buildCommand: docker build -t emotional-ai .
     startCommand: python app.py
     
-    # Environment Variables
-    envVars:
-      - key: PYTHON_VERSION
-        value: 3.11.0
-      - key: ENVIRONMENT
-        value: production
-      - key: RENDER
-        value: true
-      - key: PROJECT_PHASE
-        value: "1"
-      - key: HF_SPACE_URL
-        value: https://huggingface.co/spaces/your-username/ai-personality-demo
-    
-    # Health Check
     healthCheckPath: /
-    healthCheckTimeout: 300
-    
-    # Auto Deployment
     autoDeploy: true
-    
-    # Resource Configuration
-    resources:
-      cpu: 1
-      memory: 1GB
-      disk: 1GB
-    
-    # Network Configuration
-    ports:
-      - port: 5000
-        protocol: HTTP
-    
-    # Security Headers
-    headers:
-      - path: /*
-        name: X-Frame-Options
-        value: DENY
-      - path: /*
-        name: X-Content-Type-Options
-        value: nosniff
-      - path: /*
-        name: X-XSS-Protection
-        value: 1; mode=block
 
-# Build Filter for CI/CD
-buildFilter:
-  paths:
-    - app.py
-    - emotional_model.py
-    - character_profile.json
-    - requirements.txt
-    - render.yaml
-    - test_huggingface.py
-    - profile_validator.py
-
-# System Requirements
-system:
-  python:
-    version: 3.11.0
-  node:
-    version: 18
-
-# Dependencies Cache
-cache:
-  paths:
-    - ~/.cache/pip
-    - ~/.cache/torch
-    - ~/.cache/huggingface
-
-# Deployment Hooks
-hooks:
-  preBuild: |
-    echo "🔧 Предварительная настройка среды..."
-    python --version
-    pip --version
-  postBuild: |
-    echo "📦 Построение завершено"
-    echo "🔍 Проверка установленных пакетов..."
-    pip list
-  preDeploy: |
-    echo "🚀 Подготовка к деплою..."
-    python -c "import sys; print(f'Python path: {sys.path}')"
-  postDeploy: |
-    echo "🎉 Деплой завершен успешно!"
-    echo "📊 Приложение доступно по URL"
-
-# Monitoring and Logging
-logging:
-  enabled: true
-  level: info
-
-# Scaling (for future phases)
-scaling:
-  minInstances: 1
-  maxInstances: 1
-  targetMemoryPercent: 80
-  targetCPUPercent: 80
+databases:
+  - name: emotional-ai-db
+    plan: free
+    region: frankfurt
+    databaseName: emotional_ai_db
+    user: emotional_ai_db_user
