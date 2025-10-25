@@ -7,6 +7,8 @@ import sys
 import os
 import importlib
 
+os.chdir('..')
+
 def check_module(module_name):
     """Проверка наличия модуля"""
     try:
